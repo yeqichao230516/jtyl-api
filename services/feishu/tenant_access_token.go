@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/yeqichao230516/jtyl-api/pkg/redis"
+	db_redis "github.com/yeqichao230516/jtyl-api/db/redis"
 )
 
 func RefreshToken() error {
@@ -35,10 +35,10 @@ func RefreshToken() error {
 	if respBody["code"].(float64) != 0 {
 		return fmt.Errorf("请求失败，状态码: %d", int(respBody["code"].(float64)))
 	}
-	redis.Client().Set(context.Background(), "feishu_tenant_access_token", respBody["tenant_access_token"].(string), 7200*time.Second)
+	db_redis.Client().Set(context.Background(), "feishu_tenant_access_token", respBody["tenant_access_token"].(string), 7200*time.Second)
 	return nil
 }
 
 func GetToken() string {
-	return redis.Client().Get(context.Background(), "feishu_tenant_access_token").String()
+	return db_redis.Client().Get(context.Background(), "feishu_tenant_access_token").String()
 }
